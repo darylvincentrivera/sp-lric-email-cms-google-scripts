@@ -7,13 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://apis.google.com/js/api.js"></script>
 
-    <!----- CSS ----->
     <style>
       .hidden { display: none !important; }
-
-      .nav-btn {
-        border-left: 3px solid transparent;
-      }
+      .nav-btn { border-left: 3px solid transparent; }
       .active-nav-btn {
         background-color: #1e293b !important;
         color: #ffffff !important;
@@ -42,7 +38,6 @@
 
     <main class="max-w-6xl mx-auto p-6 md:p-8">
 
-      <!-- DASHBOARD TAB -->
       <section id="tab-dashboard" class="tab-content space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
@@ -67,7 +62,6 @@
         </div>
       </section>
 
-      <!-- RECIPIENTS TAB -->
       <section id="tab-recipients" class="tab-content hidden space-y-4">
         <div class="flex justify-between items-center">
           <h2 class="text-lg font-bold text-white tracking-tight">Active Mailing Base</h2>
@@ -88,7 +82,6 @@
         </div>
       </section>
 
-      <!-- CAMPAIGNS TAB -->
       <section id="tab-campaigns" class="tab-content hidden space-y-4">
         <h2 class="text-lg font-bold text-white tracking-tight">Historical Launch Log Records</h2>
         <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
@@ -105,7 +98,6 @@
         </div>
       </section>
 
-      <!-- SETTINGS TAB -->
       <section id="tab-settings" class="tab-content hidden space-y-4">
         <div class="flex justify-between items-center mb-2">
           <div>
@@ -117,7 +109,6 @@
 
         <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl grid grid-cols-1 md:grid-cols-2 gap-4">
           <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider col-span-full border-b border-slate-800 pb-2 mb-2">Social Network Routing</h3>
-
           <div>
             <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-1">Facebook URL</label>
             <input type="text" id="link-facebook" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-xs text-white focus:ring-1 focus:ring-blue-500" placeholder="https://facebook.com/...">
@@ -150,7 +141,6 @@
       </section>
     </main>
 
-    <!-- CAMPAIGN BUILDER MODAL -->
     <div id="campaign-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
       <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl h-[90vh] flex flex-col rounded-xl shadow-2xl overflow-hidden">
         <div class="p-4 border-b border-slate-800 bg-slate-950 flex justify-between items-center shrink-0">
@@ -160,15 +150,11 @@
         <div class="flex-1 overflow-y-auto p-6 space-y-5 bg-slate-900/40">
           <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 space-y-2">
             <label class="block text-[11px] font-bold text-blue-400 uppercase tracking-wide">📂 Campaign Asset Target Folder (Optional)</label>
-            <input type="text" id="campaign-folder-input" oninput="extractFolderIdFromPastedLink(this)"
-              class="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2 text-xs text-slate-300 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="Paste custom Google Drive folder link, or leave blank to use default root directory...">
+            <input type="text" id="campaign-folder-input" oninput="extractFolderIdFromPastedLink(this)" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2 text-xs text-slate-300 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="Paste custom Google Drive folder link, or leave blank to use default root directory...">
           </div>
           <div>
             <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-1">Campaign Subject Header</label>
-            <input type="text" id="campaign-subject"
-              class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="e.g., June System Performance Blast">
+            <input type="text" id="campaign-subject" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., June System Performance Blast">
           </div>
           <div class="border-t border-slate-800/80 pt-4">
             <div class="flex justify-between items-center mb-3">
@@ -185,7 +171,6 @@
       </div>
     </div>
 
-    <!-- ADD USER MODAL -->
     <div id="user-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
       <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl shadow-xl overflow-hidden p-6 space-y-4">
         <h3 class="text-md font-bold text-white tracking-tight">Register New Subscriber Profile</h3>
@@ -206,7 +191,6 @@
       </div>
     </div>
 
-    <!-- EDIT USER MODAL -->
     <div id="edit-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
       <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl shadow-xl overflow-hidden p-6 space-y-4">
         <h3 class="text-md font-bold text-white tracking-tight">Modify Subscriber Profile Data</h3>
@@ -228,7 +212,6 @@
       </div>
     </div>
 
-    <!-- PREVIEW MODAL -->
     <div id="preview-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
       <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl h-[85vh] flex flex-col rounded-2xl shadow-2xl overflow-hidden">
         <div class="p-4 border-b border-slate-800 bg-slate-950 flex justify-between items-center shrink-0">
@@ -242,72 +225,138 @@
       </div>
     </div>
 
-    <!----- JAVASCRIPT ----->
     <script>
       let segmentCounter = 0;
       let activePickerRowTargetId = null;
 
-      document.addEventListener('DOMContentLoaded', () => {
-        refreshDashboardStats();
-        loadDirectoryTable();
-        loadCampaignsHistoryTable();
-        loadSystemSettings();
+      // Safe Base64 encoding/decoding helper that will NEVER crash the thread
+      function safeBtoa(str) {
+        try {
+          if (!str) return '';
+          return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+            return String.fromCharCode('0x' + p1);
+          }));
+        } catch(e) {
+          console.error("Base64 Encoding Exception handled safely:", e);
+          return '';
+        }
+      }
 
-        if (typeof gapi !== 'undefined') {
-          gapi.load('picker', () => { console.log('Google Picker Framework Initialized.'); });
+      function safeAtob(str) {
+        try {
+          if (!str) return '';
+          return decodeURIComponent(atob(str).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          }).join(''));
+        } catch(e) {
+          console.error("Base64 Decoding Exception handled safely:", e);
+          return '';
+        }
+      }
+
+      // SAFE INITIALIZATION: Run each system piece isolated so failures don't kill the layout
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log("DOM fully loaded. Initializing systems...");
+        
+        // Always make sure UI tabs are functional immediately
+        try {
+          switchTab('dashboard'); 
+        } catch(e) { console.error("Tab switch failed:", e); }
+
+        // Fetch data asynchronously without blocking the UI thread
+        setTimeout(() => {
+          try { refreshDashboardStats(); } catch(e) { console.error("Stats load failed:", e); }
+          try { loadDirectoryTable(); } catch(e) { console.error("Directory load failed:", e); }
+          try { loadCampaignsHistoryTable(); } catch(e) { console.error("Campaigns load failed:", e); }
+          try { loadSystemSettings(); } catch(e) { console.error("Settings load failed:", e); }
+        }, 100);
+
+        // Fail-safe wrapper for Google API frame load
+        try {
+          if (typeof gapi !== 'undefined') {
+            gapi.load('picker', () => { console.log('Google Picker Framework Initialized.'); });
+          }
+        } catch(e) {
+          console.warn("Google API framework skipped or blocked by browser context.");
         }
       });
 
-      // FIX 3: Added 'settings' to titleMap to prevent JS error on Settings tab click
+      // CORE SYSTEM NAVIGATION (Will now always work)
       function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-        document.querySelectorAll('.nav-btn').forEach(btn => {
+        console.log("Switching to tab:", tabId);
+        
+        const tabs = document.querySelectorAll('.tab-content');
+        const buttons = document.querySelectorAll('.nav-btn');
+        
+        if (tabs.length === 0) return;
+
+        // Hide tabs safely
+        tabs.forEach(el => el.classList.add('hidden'));
+        buttons.forEach(btn => {
           btn.classList.remove('active-nav-btn', 'text-white');
           btn.classList.add('text-slate-400');
         });
 
-        document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+        // Show target tab safely
+        const targetTab = document.getElementById(`tab-${tabId}`);
         const activeBtn = document.getElementById(`nav-${tabId}`);
-        activeBtn.classList.add('active-nav-btn');
-        activeBtn.classList.remove('text-slate-400');
+        
+        if (targetTab) targetTab.classList.remove('hidden');
+        if (activeBtn) {
+          activeBtn.classList.add('active-nav-btn');
+          activeBtn.classList.remove('text-slate-400');
+        }
 
         const titleMap = {
           'dashboard':  'Dashboard Matrix',
           'recipients': 'User Directory Management',
           'campaigns':  'Published Dispatch Records',
-          'settings':   'System Configuration'   // ← was missing
+          'settings':   'System Configuration'
         };
-        document.getElementById('page-title').innerText = titleMap[tabId] || tabId;
-
-        if (tabId === 'dashboard')  refreshDashboardStats();
-        if (tabId === 'recipients') loadDirectoryTable();
-        if (tabId === 'campaigns')  loadCampaignsHistoryTable();
-        if (tabId === 'settings')   loadSystemSettings();
+        
+        const titleEl = document.getElementById('page-title');
+        if (titleEl) titleEl.innerText = titleMap[tabId] || tabId;
       }
 
       function refreshDashboardStats() {
+        if (typeof google === 'undefined' || !google.script) return;
         google.script.run
-          .withFailureHandler(err => { console.error('Stats error:', err); })
+          .withFailureHandler(err => { 
+            console.error('Stats error:', err); 
+            document.getElementById('stat-status').innerText = "Offline Mode";
+          })
           .withSuccessHandler(stats => {
-            document.getElementById('stat-published').innerText = stats.totalPublished + " campaigns";
-            document.getElementById('stat-active').innerText    = stats.activeRecipients + " users";
+            if (!stats) return;
+            const pubEl = document.getElementById('stat-published');
+            const actEl = document.getElementById('stat-active');
             const statusEl = document.getElementById('stat-status');
-            statusEl.innerText   = stats.systemStatus;
-            statusEl.className   = `text-3xl font-bold mt-2 ${stats.statusColor}`;
+            
+            if (pubEl) pubEl.innerText = (stats.totalPublished || 0) + " campaigns";
+            if (actEl) actEl.innerText = (stats.activeRecipients || 0) + " users";
+            if (statusEl) {
+              statusEl.innerText = stats.systemStatus || "Operational";
+              statusEl.className = `text-3xl font-bold mt-2 ${stats.statusColor || 'text-emerald-400'}`;
+            }
           })
           .getDashboardMetrics();
       }
 
       function loadDirectoryTable() {
         const tableBody = document.getElementById('directory-table');
-        tableBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500 italic">Loading...</td></tr>`;
+        if (!tableBody) return;
+        tableBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500 italic">Loading Directory...</td></tr>`;
+
+        if (typeof google === 'undefined' || !google.script) {
+          tableBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-rose-400 italic">Dev Mode: Google Engine Unavailable</td></tr>`;
+          return;
+        }
 
         google.script.run
           .withFailureHandler(err => {
             tableBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-rose-400 italic">Error loading recipients: ${err.message}</td></tr>`;
           })
           .withSuccessHandler(users => {
-            if (users.length === 0) {
+            if (!users || users.length === 0) {
               tableBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500 italic">No contacts tracked.</td></tr>`;
               return;
             }
@@ -316,13 +365,15 @@
               const isActive  = user.status === 'Active';
               const toggleBg  = isActive ? 'bg-blue-600' : 'bg-slate-700';
               const toggleDot = isActive ? 'translate-x-5' : 'translate-x-0';
-              const safeName  = btoa(unescape(encodeURIComponent(user.name)));
-              const safeEmail = btoa(unescape(encodeURIComponent(user.email)));
+              
+              // Utilizing safe encoding logic
+              const safeName  = safeBtoa(user.name);
+              const safeEmail = safeBtoa(user.email);
 
               htmlLines += `
                 <tr class="hover:bg-slate-900/40 transition border-b border-slate-800/40">
-                  <td class="p-4 font-medium text-white">${user.name}</td>
-                  <td class="p-4 text-slate-400">${user.email}</td>
+                  <td class="p-4 font-medium text-white">${user.name || 'Unknown'}</td>
+                  <td class="p-4 text-slate-400">${user.email || 'No Email'}</td>
                   <td class="p-4">
                     <button onclick="handleToggleStatus(${user.rowId}, '${user.status}')"
                       class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent ${toggleBg} transition-colors duration-200 ease-in-out focus:outline-none">
@@ -343,14 +394,17 @@
 
       function loadCampaignsHistoryTable() {
         const historyBody = document.getElementById('campaigns-history-table');
-        historyBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 italic">Loading...</td></tr>`;
+        if (!historyBody) return;
+        historyBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 italic">Loading Logs...</td></tr>`;
+
+        if (typeof google === 'undefined' || !google.script) return;
 
         google.script.run
           .withFailureHandler(err => {
             historyBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-rose-400 italic">Error loading campaigns: ${err.message}</td></tr>`;
           })
           .withSuccessHandler(campaigns => {
-            if (campaigns.length === 0) {
+            if (!campaigns || campaigns.length === 0) {
               historyBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 italic">No sent campaigns logged.</td></tr>`;
               return;
             }
@@ -358,12 +412,12 @@
             campaigns.forEach(camp => {
               const safeBody       = camp.htmlBody  || '';
               const safeSubject    = camp.subject   || '';
-              const encodedHtml    = btoa(unescape(encodeURIComponent(safeBody)));
-              const encodedSubject = btoa(unescape(encodeURIComponent(safeSubject)));
+              const encodedHtml    = safeBtoa(safeBody);
+              const encodedSubject = safeBtoa(safeSubject);
 
               htmlLines += `
                 <tr class="hover:bg-slate-900/40 transition border-b border-slate-800/40">
-                  <td class="p-4 font-mono text-xs text-slate-400">${camp.timestamp}</td>
+                  <td class="p-4 font-mono text-xs text-slate-400">${camp.timestamp || 'N/A'}</td>
                   <td class="p-4 font-medium text-white">${safeSubject}</td>
                   <td class="p-4 text-right">
                     <button onclick="openCampaignPreviewModal('${encodedSubject}', '${encodedHtml}')"
@@ -378,8 +432,8 @@
       }
 
       function openCampaignPreviewModal(encodedSubj, encodedHtml) {
-        const subject  = decodeURIComponent(escape(atob(encodedSubj)));
-        const htmlBody = decodeURIComponent(escape(atob(encodedHtml)));
+        const subject  = safeAtob(encodedSubj);
+        const htmlBody = safeAtob(encodedHtml);
 
         document.getElementById('preview-subject-header').innerText = subject;
         togglePreviewModal(true);
@@ -395,6 +449,7 @@
 
       function togglePreviewModal(open) {
         const modal = document.getElementById('preview-modal');
+        if (!modal) return;
         if (open) {
           modal.classList.remove('hidden');
         } else {
@@ -420,12 +475,17 @@
         activePickerRowTargetId = rowId;
         const currentCustomFolderId = document.getElementById('campaign-folder-input').value.trim();
 
+        if (typeof google === 'undefined' || !google.script) {
+          alert("Google Server integration unavailable.");
+          return;
+        }
+
         google.script.run
           .withSuccessHandler(folderId => {
             google.script.run
               .withSuccessHandler(token => {
                 if (typeof google.picker === 'undefined') {
-                  alert('Google Picker is not loaded yet. Please wait a moment and try again.');
+                  alert('Google Workspace Picker layout blocks this request. Please insert your image URL directly into the asset field.');
                   return;
                 }
                 const view = new google.picker.DocsView(google.picker.ViewId.DOCS)
@@ -442,7 +502,6 @@
                   .setSize(600, 420)
                   .setTitle("Select Graphic Asset Segment")
                   .build();
-
                 picker.setVisible(true);
               })
               .getOAuthToken();
@@ -486,10 +545,10 @@
       function appendNewSegmentRow() {
         segmentCounter++;
         const container = document.getElementById('segments-container');
+        if (!container) return;
         const rowHTML = `
           <div id="segment-row-${segmentCounter}" data-row-id="${segmentCounter}" class="campaign-segment-row bg-slate-950 border border-slate-800 p-4 rounded-xl space-y-3 relative group">
             <button onclick="removeSegmentRow(${segmentCounter})" class="absolute top-3 right-3 text-slate-600 hover:text-rose-400 text-sm font-bold transition cursor-pointer" title="Remove segment">×</button>
-
             <div>
               <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-1">Image Asset Link Source</label>
               <div class="flex gap-2">
@@ -501,13 +560,11 @@
                   class="text-xs bg-blue-600 hover:bg-blue-700 text-white font-medium px-3 py-2 rounded-lg transition shrink-0 cursor-pointer flex items-center gap-1 shadow-sm">🖼️ Select from Drive</button>
               </div>
             </div>
-
             <div class="flex items-center gap-2 pt-1">
               <input type="checkbox" id="check-link-${segmentCounter}" onchange="toggleLinkInput(this)"
                 class="segment-checkbox-toggle rounded bg-slate-900 border-slate-800 text-blue-600 focus:ring-0 focus:ring-offset-0 h-4 w-4 cursor-pointer">
               <label for="check-link-${segmentCounter}" class="text-xs text-slate-400 font-medium select-none cursor-pointer">Contain interactive redirection hyperlink?</label>
             </div>
-
             <div class="link-input-wrapper hidden transition-all duration-150">
               <label class="block text-[11px] font-bold text-emerald-400 uppercase tracking-wide mb-1">Target Action Destination URL</label>
               <input type="text" id="segment-target-input-${segmentCounter}"
@@ -526,7 +583,9 @@
 
       function toggleLinkInput(checkboxElement) {
         const parentRow    = checkboxElement.closest('.campaign-segment-row');
+        if (!parentRow) return;
         const inputWrapper = parentRow.querySelector('.link-input-wrapper');
+        if (!inputWrapper) return;
         if (checkboxElement.checked) {
           inputWrapper.classList.remove('hidden');
         } else {
@@ -537,6 +596,7 @@
       }
 
       function handleToggleStatus(rowId, status) {
+        if (typeof google === 'undefined') return;
         google.script.run
           .withFailureHandler(err => { alert('Toggle failed: ' + err.message); })
           .withSuccessHandler(() => {
@@ -548,13 +608,14 @@
 
       function openEditModal(rowId, base64Name, base64Email) {
         document.getElementById('edit-row-id').value = rowId;
-        document.getElementById('edit-name').value   = decodeURIComponent(escape(atob(base64Name)));
-        document.getElementById('edit-email').value  = decodeURIComponent(escape(atob(base64Email)));
+        document.getElementById('edit-name').value   = safeAtob(base64Name);
+        document.getElementById('edit-email').value  = safeAtob(base64Email);
         toggleEditModal(true);
       }
 
       function toggleModal(open) {
         const modal = document.getElementById('user-modal');
+        if (!modal) return;
         if (open) {
           modal.classList.remove('hidden');
         } else {
@@ -566,12 +627,14 @@
 
       function toggleEditModal(open) {
         const modal = document.getElementById('edit-modal');
+        if (!modal) return;
         if (open) modal.classList.remove('hidden');
         else       modal.classList.add('hidden');
       }
 
       function toggleCampaignModal(open) {
         const modal = document.getElementById('campaign-modal');
+        if (!modal) return;
         if (open) {
           modal.classList.remove('hidden');
           document.getElementById('segments-container').innerHTML  = '';
@@ -621,10 +684,11 @@
       }
 
       function loadSystemSettings() {
+        if (typeof google === 'undefined') return;
         google.script.run
           .withFailureHandler(err => { console.error('Settings load error:', err); })
           .withSuccessHandler(settings => {
-            // FIX 4: Keys are now lowercase from the backend — these match correctly
+            if (!settings) return;
             if (settings.facebook)  document.getElementById('link-facebook').value  = settings.facebook;
             if (settings.x)         document.getElementById('link-x').value         = settings.x;
             if (settings.instagram) document.getElementById('link-instagram').value = settings.instagram;
@@ -636,9 +700,9 @@
           .getSystemSettings();
       }
 
-      // FIX 5: Send lowercase keys + added withFailureHandler for silent error visibility
       function commitSettings() {
         const btn = document.getElementById('save-settings-btn');
+        if (!btn) return;
         btn.innerText = "⏳ Saving...";
 
         const payload = {
@@ -668,7 +732,6 @@
         const btn      = document.getElementById('send-broadcast-btn');
         const subj     = document.getElementById('campaign-subject').value.trim();
         const rowNodes = document.querySelectorAll('.campaign-segment-row');
-
         if (!subj) {
           alert('Please enter a subject header before dispatching.');
           return;
@@ -678,7 +741,6 @@
           return;
         }
 
-        // Build image segments
         let inlineTableCellsHTML = '';
         for (let i = 0; i < rowNodes.length; i++) {
           const row        = rowNodes[i];
@@ -686,7 +748,6 @@
           const imgField   = document.getElementById(`segment-img-input-${internalId}`);
           const linkToggle = document.getElementById(`check-link-${internalId}`);
           const targetField= document.getElementById(`segment-target-input-${internalId}`);
-
           const imageUrl  = imgField    ? imgField.value.trim()   : "";
           const hasLink   = linkToggle  ? linkToggle.checked      : false;
           const targetUrl = targetField ? targetField.value.trim(): "";
@@ -707,7 +768,6 @@
           inlineTableCellsHTML += `<tr><td width="600" style="width:600px;padding:0;margin:0;line-height:0;">${cellBody}</td></tr>`;
         }
 
-        // Build social footer
         const socialConfig = [
           { id: 'link-facebook',  icon: 'https://cdn-icons-png.flaticon.com/512/3128/3128208.png' },
           { id: 'link-x',         icon: 'https://cdn-icons-png.flaticon.com/512/11823/11823292.png' },
@@ -726,10 +786,7 @@
         });
 
         const webLink = document.getElementById('link-website').value.trim();
-        const webHTML = webLink
-          ? `<div style="margin-top:15px;"><a href="${webLink}" target="_blank" style="font-family:sans-serif;font-size:12px;color:#3b82f6;text-decoration:none;font-weight:bold;">Visit Official Portal</a></div>`
-          : '';
-
+        const webHTML = webLink ? `<div style="margin-top:15px;"><a href="${webLink}" target="_blank" style="font-family:sans-serif;font-size:12px;color:#3b82f6;text-decoration:none;font-weight:bold;">Visit Official Portal</a></div>` : '';
         const footerHTML = (socialIconsHTML || webHTML) ? `
           <tr>
             <td align="center" style="padding:30px 20px;background-color:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
@@ -739,7 +796,6 @@
             </td>
           </tr>` : '';
 
-        // Assemble master HTML
         const masterCompiledHtml = `<!DOCTYPE html>
 <html>
 <head>
@@ -765,7 +821,6 @@
 </body>
 </html>`;
 
-        // Execute broadcast
         btn.disabled  = true;
         btn.innerText = '⏳ Processing Queue...';
 

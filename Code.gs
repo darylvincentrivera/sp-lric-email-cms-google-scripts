@@ -21,7 +21,7 @@ function getTargetSpreadsheet() {
   return SpreadsheetApp.openById("1KAssPljYfiBWQpd2tpIGGTtEQCADCYj9lyVBaipEX7k");
 }
 
-// FIX 1: Normalize all keys to lowercase so loadSystemSettings() can match them
+// Normalize all keys to lowercase so loadSystemSettings() can match them
 function getSystemSettings() {
   const ss = getTargetSpreadsheet();
   const sheet = ss.getSheetByName('Settings');
@@ -36,7 +36,7 @@ function getSystemSettings() {
   return settings;
 }
 
-// FIX 2: Accept flat string values instead of {url, enabled} objects
+// Accept flat string values instead of {url, enabled} objects
 function saveSystemSettings(settingsObj) {
   const ss = getTargetSpreadsheet();
   let sheet = ss.getSheetByName('Settings') || ss.insertSheet('Settings');
@@ -66,7 +66,6 @@ function getDashboardMetrics() {
     campaignSheet.appendRow(['Timestamp', 'Subject', 'HTML Body']);
   }
   const totalPublished = campaignSheet.getLastRow() > 1 ? campaignSheet.getLastRow() - 1 : 0;
-
   return {
     totalPublished: totalPublished,
     activeRecipients: activeRecipients,
@@ -79,7 +78,6 @@ function getRecipientList() {
   const ss = getTargetSpreadsheet();
   const sheet = ss.getSheetByName('Recipients');
   if (!sheet || sheet.getLastRow() <= 1) return [];
-
   const data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 4).getValues();
   return data.map((row, index) => ({
     rowId: index + 2,
@@ -94,7 +92,6 @@ function getCampaignList() {
   const ss = getTargetSpreadsheet();
   const sheet = ss.getSheetByName('Campaigns');
   if (!sheet || sheet.getLastRow() <= 1) return [];
-
   const data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 3).getValues();
   return data.map((row) => ({
     timestamp: row[0] ? Utilities.formatDate(new Date(row[0]), Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm") : 'N/A',

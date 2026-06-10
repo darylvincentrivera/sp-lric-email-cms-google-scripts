@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>LRIC Content Mailer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+
+    <!----- CSS ----->
+    <style>
+      .hidden { display: none !important; }
+
+      .nav-btn {
+        border-left: 3px solid transparent;
+      }
+      .active-nav-btn {
+        background-color: #1e293b !important;
+        color: #ffffff !important;
+        border-left-color: #3b82f6 !important;
+      }
+    </style>
+  </head>
+
+  <body class="bg-slate-950 text-slate-100 min-h-screen font-sans anti-aliased selection:bg-blue-500 selection:text-white">
+
+    <header class="border-b border-slate-800 bg-slate-900/40 backdrop-blur sticky top-0 z-40 px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">SP</div>
+        <div>
+          <h1 class="text-sm font-bold text-white tracking-wide">LRIC MAILER</h1>
+          <p id="page-title" class="text-xs text-slate-400 font-medium">Dashboard</p>
+        </div>
+      </div>
+      <nav class="flex items-center bg-slate-950 border border-slate-800/80 p-1 rounded-xl">
+        <button id="nav-dashboard"   onclick="switchTab('dashboard')"   class="nav-btn active-nav-btn px-4 py-2 text-xs font-semibold rounded-lg transition cursor-pointer">📊 Dashboard</button>
+        <button id="nav-recipients"  onclick="switchTab('recipients')"  class="nav-btn text-slate-400 hover:text-slate-200 px-4 py-2 text-xs font-semibold rounded-lg transition cursor-pointer">👥 Directory</button>
+        <button id="nav-campaigns"   onclick="switchTab('campaigns')"   class="nav-btn text-slate-400 hover:text-slate-200 px-4 py-2 text-xs font-semibold rounded-lg transition cursor-pointer">📜 Campaigns</button>
+        <button id="nav-settings"    onclick="switchTab('settings')"    class="nav-btn text-slate-400 hover:text-slate-200 px-4 py-2 text-xs font-semibold rounded-lg transition cursor-pointer">⚙️ Settings</button>
+      </nav>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-6 md:p-8">
+
+      <!-- DASHBOARD TAB -->
+      <section id="tab-dashboard" class="tab-content space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Recipient Scope</h4>
+            <p id="stat-active" class="text-3xl font-extrabold text-white mt-2">Loading...</p>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Completed Campaign Drops</h4>
+            <p id="stat-published" class="text-3xl font-extrabold text-white mt-2">Loading...</p>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Core Link Handshake</h4>
+            <p id="stat-status" class="text-3xl font-extrabold text-emerald-400 mt-2">Operational</p>
+          </div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex flex-col md:flex-row gap-4 items-center justify-between bg-gradient-to-r from-slate-900 via-slate-900 to-blue-950/20">
+          <div>
+            <h3 class="text-md font-bold text-white">Dynamic Segment Layout Builder</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Assemble public Drive graphic assets into unblocked responsive email tables.</p>
+          </div>
+          <button onclick="toggleCampaignModal(true)" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs px-5 py-3 rounded-xl shadow-lg shadow-blue-600/10 transition cursor-pointer">🎨 Create Campaign Drop</button>
+        </div>
+      </section>
+
+      <!-- RECIPIENTS TAB -->
+      <section id="tab-recipients" class="tab-content hidden space-y-4">
+        <div class="flex justify-between items-center">
+          <h2 class="text-lg font-bold text-white tracking-tight">Active Mailing Base</h2>
+          <button onclick="toggleModal(true)" class="bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-200 text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer">➕ Register New Subscriber</button>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950/60 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                <th class="p-4">Subscriber Identity Name</th>
+                <th class="p-4">Destination Mail Address</th>
+                <th class="p-4">Status Token</th>
+                <th class="p-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="directory-table" class="divide-y divide-slate-800/60 text-sm"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CAMPAIGNS TAB -->
+      <section id="tab-campaigns" class="tab-content hidden space-y-4">
+        <h2 class="text-lg font-bold text-white tracking-tight">Historical Launch Log Records</h2>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950/60 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                <th class="p-4">Timestamp Released</th>
+                <th class="p-4">Email Subject Line Header</th>
+                <th class="p-4 text-right">Visual Layout Preview</th>
+              </tr>
+            </thead>
+            <tbody id="campaigns-history-table" class="divide-y divide-slate-800/60 text-sm"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SETTINGS TAB -->
+      <section id="tab-settings" class="tab-content hidden space-y-4">
+        <div class="flex justify-between items-center mb-2">
+          <div>
+            <h2 class="text-lg font-bold text-white tracking-tight">System Configuration</h2>
+            <p class="text-xs text-slate-400 mt-1">Manage persistent global variables and embedded links for all outbound dispatches.</p>
+          </div>
+          <button onclick="commitSettings()" id="save-settings-btn" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-emerald-600/20 transition cursor-pointer">💾 Save Network Links</button>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl grid grid-cols-1 md:grid-cols-2 gap-4">
+          <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider col-span-full border-b border-slate-800 pb-2 mb-2">Social Network Routing</h3>
+
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-1">Facebook URL</label>
+            <input type="text" id="link-facebook" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-xs text-white focus:ring-1 focus:ring-blue-500" placeholder="https://facebook.com/...">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-1">X (Twitter) URL</label>
+            <input type="text" id="link-x" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-xs text-white focus:ring-1 focus:ring-blue-500" placeholder="https://x.com/...">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-1">Instagram URL</label>
+            <input type="text" id="link-instagram" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-xs text-white focus:ring-1 focus:ring-blue-500" placeholder="https://instagram.com/...">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-1">LinkedIn URL</label>
+            <input type="text" id="link-linkedin" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-xs text-white focus:ring-1 focus:ring-blue-500" placeholder="https://linkedin.com/...">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-1">YouTube URL</label>
+            <input type="text" id="link-youtube" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-xs text-white focus:ring-1 focus:ring-blue-500" placeholder="https://youtube.com/...">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-1">TikTok URL</label>
+            <input type="text" id="link-tiktok" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-xs text-white focus:ring-1 focus:ring-blue-500" placeholder="https://tiktok.com/...">
+          </div>
+          <div class="col-span-full">
+            <label class="block text-[11px] font-bold text-emerald-400 uppercase tracking-wide mb-1">Primary Web Portal</label>
+            <input type="text" id="link-website" class="w-full bg-slate-950 border border-emerald-900/50 rounded-lg px-3 py-2.5 text-xs text-white focus:ring-1 focus:ring-emerald-500" placeholder="https://www.yourdomain.gov.ph">
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- CAMPAIGN BUILDER MODAL -->
+    <div id="campaign-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+      <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl h-[90vh] flex flex-col rounded-xl shadow-2xl overflow-hidden">
+        <div class="p-4 border-b border-slate-800 bg-slate-950 flex justify-between items-center shrink-0">
+          <h3 class="text-sm font-bold text-white tracking-wider uppercase">🎨 Infinite Segment Campaign Builder</h3>
+          <button onclick="toggleCampaignModal(false)" class="text-slate-400 hover:text-rose-400 text-2xl font-semibold p-1 cursor-pointer">×</button>
+        </div>
+        <div class="flex-1 overflow-y-auto p-6 space-y-5 bg-slate-900/40">
+          <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 space-y-2">
+            <label class="block text-[11px] font-bold text-blue-400 uppercase tracking-wide">📂 Campaign Asset Target Folder (Optional)</label>
+            <input type="text" id="campaign-folder-input" oninput="extractFolderIdFromPastedLink(this)"
+              class="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2 text-xs text-slate-300 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder="Paste custom Google Drive folder link, or leave blank to use default root directory...">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-1">Campaign Subject Header</label>
+            <input type="text" id="campaign-subject"
+              class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="e.g., June System Performance Blast">
+          </div>
+          <div class="border-t border-slate-800/80 pt-4">
+            <div class="flex justify-between items-center mb-3">
+              <h4 class="text-xs font-bold text-slate-300 tracking-wide uppercase">Image-Slice Stack Sequence</h4>
+              <button onclick="appendNewSegmentRow()" class="text-xs bg-blue-600/10 hover:bg-blue-600/25 text-blue-400 border border-blue-500/30 px-3 py-1.5 rounded-lg transition font-medium cursor-pointer">➕ Add Image Segment</button>
+            </div>
+            <div id="segments-container" class="space-y-3"></div>
+          </div>
+        </div>
+        <div class="p-4 border-t border-slate-800 bg-slate-950 flex justify-end gap-2 shrink-0">
+          <button onclick="toggleCampaignModal(false)" class="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-slate-200 cursor-pointer">Close Editor</button>
+          <button id="send-broadcast-btn" onclick="fireBroadcastCampaign()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-lg shadow-md transition cursor-pointer">🚀 Execute Bulk Mail Dispatch</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD USER MODAL -->
+    <div id="user-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+      <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl shadow-xl overflow-hidden p-6 space-y-4">
+        <h3 class="text-md font-bold text-white tracking-tight">Register New Subscriber Profile</h3>
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Full Profile Name</label>
+            <input type="text" id="modal-name" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Target Delivery Address</label>
+            <input type="email" id="modal-email" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button onclick="toggleModal(false)" class="text-xs font-medium px-4 py-2 text-slate-400 hover:text-slate-200 cursor-pointer">Cancel</button>
+          <button onclick="submitNewUser()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition cursor-pointer">Commit Registry</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDIT USER MODAL -->
+    <div id="edit-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+      <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl shadow-xl overflow-hidden p-6 space-y-4">
+        <h3 class="text-md font-bold text-white tracking-tight">Modify Subscriber Profile Data</h3>
+        <input type="hidden" id="edit-row-id">
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Profile Name Mapping</label>
+            <input type="text" id="edit-name" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Mail Route Coordinate</label>
+            <input type="email" id="edit-email" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button onclick="toggleEditModal(false)" class="text-xs font-medium px-4 py-2 text-slate-400 hover:text-slate-200 cursor-pointer">Cancel</button>
+          <button onclick="submitProfileUpdate()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition cursor-pointer">Apply Modifications</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREVIEW MODAL -->
+    <div id="preview-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+      <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl h-[85vh] flex flex-col rounded-2xl shadow-2xl overflow-hidden">
+        <div class="p-4 border-b border-slate-800 bg-slate-950 flex justify-between items-center shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono">Subject Header</span>
+            <h3 id="preview-subject-header" class="text-sm font-semibold text-white"></h3>
+          </div>
+          <button onclick="togglePreviewModal(false)" class="text-slate-400 hover:text-rose-400 text-xl font-bold p-1 cursor-pointer">×</button>
+        </div>
+        <div id="preview-render-dock" class="flex-1 overflow-y-auto p-6 bg-slate-100 flex items-center justify-center"></div>
+      </div>
+    </div>
+
+    <!----- JAVASCRIPT ----->
+    <script>
+      let segmentCounter = 0;
+      let activePickerRowTargetId = null;
+
+      document.addEventListener('DOMContentLoaded', () => {
+        refreshDashboardStats();
+        loadDirectoryTable();
+        loadCampaignsHistoryTable();
+        loadSystemSettings();
+
+        if (typeof gapi !== 'undefined') {
+          gapi.load('picker', () => { console.log('Google Picker Framework Initialized.'); });
+        }
+      });
+
+      // FIX 3: Added 'settings' to titleMap to prevent JS error on Settings tab click
+      function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+          btn.classList.remove('active-nav-btn', 'text-white');
+          btn.classList.add('text-slate-400');
+        });
+
+        document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+        const activeBtn = document.getElementById(`nav-${tabId}`);
+        activeBtn.classList.add('active-nav-btn');
+        activeBtn.classList.remove('text-slate-400');
+
+        const titleMap = {
+          'dashboard':  'Dashboard Matrix',
+          'recipients': 'User Directory Management',
+          'campaigns':  'Published Dispatch Records',
+          'settings':   'System Configuration'   // ← was missing
+        };
+        document.getElementById('page-title').innerText = titleMap[tabId] || tabId;
+
+        if (tabId === 'dashboard')  refreshDashboardStats();
+        if (tabId === 'recipients') loadDirectoryTable();
+        if (tabId === 'campaigns')  loadCampaignsHistoryTable();
+        if (tabId === 'settings')   loadSystemSettings();
+      }
+
+      function refreshDashboardStats() {
+        google.script.run
+          .withFailureHandler(err => { console.error('Stats error:', err); })
+          .withSuccessHandler(stats => {
+            document.getElementById('stat-published').innerText = stats.totalPublished + " campaigns";
+            document.getElementById('stat-active').innerText    = stats.activeRecipients + " users";
+            const statusEl = document.getElementById('stat-status');
+            statusEl.innerText   = stats.systemStatus;
+            statusEl.className   = `text-3xl font-bold mt-2 ${stats.statusColor}`;
+          })
+          .getDashboardMetrics();
+      }
+
+      function loadDirectoryTable() {
+        const tableBody = document.getElementById('directory-table');
+        tableBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500 italic">Loading...</td></tr>`;
+
+        google.script.run
+          .withFailureHandler(err => {
+            tableBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-rose-400 italic">Error loading recipients: ${err.message}</td></tr>`;
+          })
+          .withSuccessHandler(users => {
+            if (users.length === 0) {
+              tableBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500 italic">No contacts tracked.</td></tr>`;
+              return;
+            }
+            let htmlLines = '';
+            users.forEach(user => {
+              const isActive  = user.status === 'Active';
+              const toggleBg  = isActive ? 'bg-blue-600' : 'bg-slate-700';
+              const toggleDot = isActive ? 'translate-x-5' : 'translate-x-0';
+              const safeName  = btoa(unescape(encodeURIComponent(user.name)));
+              const safeEmail = btoa(unescape(encodeURIComponent(user.email)));
+
+              htmlLines += `
+                <tr class="hover:bg-slate-900/40 transition border-b border-slate-800/40">
+                  <td class="p-4 font-medium text-white">${user.name}</td>
+                  <td class="p-4 text-slate-400">${user.email}</td>
+                  <td class="p-4">
+                    <button onclick="handleToggleStatus(${user.rowId}, '${user.status}')"
+                      class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent ${toggleBg} transition-colors duration-200 ease-in-out focus:outline-none">
+                      <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${toggleDot}"></span>
+                    </button>
+                  </td>
+                  <td class="p-4 text-right">
+                    <button onclick="openEditModal(${user.rowId}, '${safeName}', '${safeEmail}')"
+                      class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium px-2.5 py-1.5 rounded border border-slate-700 transition cursor-pointer">✏️ Edit</button>
+                  </td>
+                </tr>
+              `;
+            });
+            tableBody.innerHTML = htmlLines;
+          })
+          .getRecipientList();
+      }
+
+      function loadCampaignsHistoryTable() {
+        const historyBody = document.getElementById('campaigns-history-table');
+        historyBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 italic">Loading...</td></tr>`;
+
+        google.script.run
+          .withFailureHandler(err => {
+            historyBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-rose-400 italic">Error loading campaigns: ${err.message}</td></tr>`;
+          })
+          .withSuccessHandler(campaigns => {
+            if (campaigns.length === 0) {
+              historyBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 italic">No sent campaigns logged.</td></tr>`;
+              return;
+            }
+            let htmlLines = '';
+            campaigns.forEach(camp => {
+              const safeBody       = camp.htmlBody  || '';
+              const safeSubject    = camp.subject   || '';
+              const encodedHtml    = btoa(unescape(encodeURIComponent(safeBody)));
+              const encodedSubject = btoa(unescape(encodeURIComponent(safeSubject)));
+
+              htmlLines += `
+                <tr class="hover:bg-slate-900/40 transition border-b border-slate-800/40">
+                  <td class="p-4 font-mono text-xs text-slate-400">${camp.timestamp}</td>
+                  <td class="p-4 font-medium text-white">${safeSubject}</td>
+                  <td class="p-4 text-right">
+                    <button onclick="openCampaignPreviewModal('${encodedSubject}', '${encodedHtml}')"
+                      class="text-slate-400 hover:text-blue-400 transition text-md px-2 py-1 cursor-pointer">👁️</button>
+                  </td>
+                </tr>
+              `;
+            });
+            historyBody.innerHTML = htmlLines;
+          })
+          .getCampaignList();
+      }
+
+      function openCampaignPreviewModal(encodedSubj, encodedHtml) {
+        const subject  = decodeURIComponent(escape(atob(encodedSubj)));
+        const htmlBody = decodeURIComponent(escape(atob(encodedHtml)));
+
+        document.getElementById('preview-subject-header').innerText = subject;
+        togglePreviewModal(true);
+
+        const bodyStartIndex = htmlBody.indexOf('<body>') + 6;
+        const bodyEndIndex   = htmlBody.indexOf('</body>');
+        let renderableHTML   = htmlBody;
+        if (bodyStartIndex > 5 && bodyEndIndex > 0) {
+          renderableHTML = htmlBody.substring(bodyStartIndex, bodyEndIndex);
+        }
+        document.getElementById('preview-render-dock').innerHTML = renderableHTML;
+      }
+
+      function togglePreviewModal(open) {
+        const modal = document.getElementById('preview-modal');
+        if (open) {
+          modal.classList.remove('hidden');
+        } else {
+          modal.classList.add('hidden');
+          document.getElementById('preview-render-dock').innerHTML = '';
+        }
+      }
+
+      function extractFolderIdFromPastedLink(inputElement) {
+        const rawValue = inputElement.value.trim();
+        if (!rawValue || !rawValue.includes("drive.google.com")) return;
+        let extractedId = "";
+        if (rawValue.includes("/folders/")) {
+          extractedId = rawValue.split("/folders/")[1].split("?")[0].split("/")[0];
+        } else if (rawValue.includes("id=")) {
+          const urlParams = new URLSearchParams(rawValue.split('?')[1]);
+          extractedId = urlParams.get('id');
+        }
+        if (extractedId) inputElement.value = extractedId;
+      }
+
+      function launchDrivePickerForSegment(rowId) {
+        activePickerRowTargetId = rowId;
+        const currentCustomFolderId = document.getElementById('campaign-folder-input').value.trim();
+
+        google.script.run
+          .withSuccessHandler(folderId => {
+            google.script.run
+              .withSuccessHandler(token => {
+                if (typeof google.picker === 'undefined') {
+                  alert('Google Picker is not loaded yet. Please wait a moment and try again.');
+                  return;
+                }
+                const view = new google.picker.DocsView(google.picker.ViewId.DOCS)
+                  .setMimeTypes("image/png,image/jpeg,image/jpg,image/gif,image/webp")
+                  .setParent(folderId);
+
+                const picker = new google.picker.PickerBuilder()
+                  .addView(view)
+                  .setOAuthToken(token)
+                  .setDeveloperKey("AIzaSyCHFEna7aU1nOQ4Qoug-pdEdO0TmAWoJeI")
+                  .setAppId("563783763586-e7mt1qh3rdvn458le45mhnaqfju4at5s.apps.googleusercontent.com")
+                  .setOrigin("https://script.google.com")
+                  .setCallback(pickerSelectionCallback)
+                  .setSize(600, 420)
+                  .setTitle("Select Graphic Asset Segment")
+                  .build();
+
+                picker.setVisible(true);
+              })
+              .getOAuthToken();
+          })
+          .getAssetsFolderId(currentCustomFolderId);
+      }
+
+      function pickerSelectionCallback(data) {
+        if (data.action === google.picker.Action.PICKED) {
+          const doc    = data.docs[0];
+          const fileId = doc.id;
+          if (fileId && activePickerRowTargetId) {
+            const inputField = document.getElementById(`segment-img-input-${activePickerRowTargetId}`);
+            if (inputField) {
+              inputField.value = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+              inputField.classList.add('border-emerald-500', 'bg-emerald-950/20');
+              setTimeout(() => {
+                inputField.classList.remove('border-emerald-500', 'bg-emerald-950/20');
+              }, 1500);
+            }
+          }
+        }
+      }
+
+      function processGoogleDriveLinkInput(inputElement) {
+        const rawUrl = inputElement.value.trim();
+        if (!rawUrl || !rawUrl.includes("drive.google.com")) return;
+        let fileId = "";
+        if (rawUrl.includes("/file/d/")) {
+          const parts = rawUrl.split("/file/d/");
+          if (parts[1]) fileId = parts[1].split("/")[0];
+        } else if (rawUrl.includes("id=")) {
+          const urlParams = new URLSearchParams(rawUrl.split('?')[1]);
+          fileId = urlParams.get('id');
+        }
+        if (fileId) {
+          inputElement.value = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+        }
+      }
+
+      function appendNewSegmentRow() {
+        segmentCounter++;
+        const container = document.getElementById('segments-container');
+        const rowHTML = `
+          <div id="segment-row-${segmentCounter}" data-row-id="${segmentCounter}" class="campaign-segment-row bg-slate-950 border border-slate-800 p-4 rounded-xl space-y-3 relative group">
+            <button onclick="removeSegmentRow(${segmentCounter})" class="absolute top-3 right-3 text-slate-600 hover:text-rose-400 text-sm font-bold transition cursor-pointer" title="Remove segment">×</button>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-1">Image Asset Link Source</label>
+              <div class="flex gap-2">
+                <input type="text" id="segment-img-input-${segmentCounter}"
+                  oninput="processGoogleDriveLinkInput(this)"
+                  class="segment-image-input flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="Click select button to choose from Drive...">
+                <button onclick="launchDrivePickerForSegment(${segmentCounter})"
+                  class="text-xs bg-blue-600 hover:bg-blue-700 text-white font-medium px-3 py-2 rounded-lg transition shrink-0 cursor-pointer flex items-center gap-1 shadow-sm">🖼️ Select from Drive</button>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-1">
+              <input type="checkbox" id="check-link-${segmentCounter}" onchange="toggleLinkInput(this)"
+                class="segment-checkbox-toggle rounded bg-slate-900 border-slate-800 text-blue-600 focus:ring-0 focus:ring-offset-0 h-4 w-4 cursor-pointer">
+              <label for="check-link-${segmentCounter}" class="text-xs text-slate-400 font-medium select-none cursor-pointer">Contain interactive redirection hyperlink?</label>
+            </div>
+
+            <div class="link-input-wrapper hidden transition-all duration-150">
+              <label class="block text-[11px] font-bold text-emerald-400 uppercase tracking-wide mb-1">Target Action Destination URL</label>
+              <input type="text" id="segment-target-input-${segmentCounter}"
+                class="segment-target-input w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                placeholder="https://example.com/landing-page">
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', rowHTML);
+      }
+
+      function removeSegmentRow(id) {
+        const row = document.getElementById(`segment-row-${id}`);
+        if (row) row.remove();
+      }
+
+      function toggleLinkInput(checkboxElement) {
+        const parentRow    = checkboxElement.closest('.campaign-segment-row');
+        const inputWrapper = parentRow.querySelector('.link-input-wrapper');
+        if (checkboxElement.checked) {
+          inputWrapper.classList.remove('hidden');
+        } else {
+          inputWrapper.classList.add('hidden');
+          const targetInput = inputWrapper.querySelector('.segment-target-input');
+          if (targetInput) targetInput.value = '';
+        }
+      }
+
+      function handleToggleStatus(rowId, status) {
+        google.script.run
+          .withFailureHandler(err => { alert('Toggle failed: ' + err.message); })
+          .withSuccessHandler(() => {
+            loadDirectoryTable();
+            refreshDashboardStats();
+          })
+          .toggleUserStatus(rowId, status);
+      }
+
+      function openEditModal(rowId, base64Name, base64Email) {
+        document.getElementById('edit-row-id').value = rowId;
+        document.getElementById('edit-name').value   = decodeURIComponent(escape(atob(base64Name)));
+        document.getElementById('edit-email').value  = decodeURIComponent(escape(atob(base64Email)));
+        toggleEditModal(true);
+      }
+
+      function toggleModal(open) {
+        const modal = document.getElementById('user-modal');
+        if (open) {
+          modal.classList.remove('hidden');
+        } else {
+          modal.classList.add('hidden');
+          document.getElementById('modal-name').value  = '';
+          document.getElementById('modal-email').value = '';
+        }
+      }
+
+      function toggleEditModal(open) {
+        const modal = document.getElementById('edit-modal');
+        if (open) modal.classList.remove('hidden');
+        else       modal.classList.add('hidden');
+      }
+
+      function toggleCampaignModal(open) {
+        const modal = document.getElementById('campaign-modal');
+        if (open) {
+          modal.classList.remove('hidden');
+          document.getElementById('segments-container').innerHTML  = '';
+          document.getElementById('campaign-folder-input').value   = '';
+          document.getElementById('campaign-subject').value        = '';
+          segmentCounter = 0;
+          appendNewSegmentRow();
+        } else {
+          modal.classList.add('hidden');
+          document.getElementById('campaign-subject').value = '';
+        }
+      }
+
+      function submitNewUser() {
+        const name  = document.getElementById('modal-name').value.trim();
+        const email = document.getElementById('modal-email').value.trim();
+        if (!name || !email) {
+          alert('Please enter both a name and a valid email address.');
+          return;
+        }
+        google.script.run
+          .withFailureHandler(err => { alert('Failed to add recipient: ' + err.message); })
+          .withSuccessHandler(() => {
+            toggleModal(false);
+            loadDirectoryTable();
+            refreshDashboardStats();
+          })
+          .addNewRecipient(name, email);
+      }
+
+      function submitProfileUpdate() {
+        const rowId = document.getElementById('edit-row-id').value;
+        const name  = document.getElementById('edit-name').value.trim();
+        const email = document.getElementById('edit-email').value.trim();
+        if (!name || !email) {
+          alert('Please enter both a name and a valid email address.');
+          return;
+        }
+        google.script.run
+          .withFailureHandler(err => { alert('Update failed: ' + err.message); })
+          .withSuccessHandler(() => {
+            toggleEditModal(false);
+            loadDirectoryTable();
+            refreshDashboardStats();
+          })
+          .updateRecipientDetails(rowId, name, email);
+      }
+
+      function loadSystemSettings() {
+        google.script.run
+          .withFailureHandler(err => { console.error('Settings load error:', err); })
+          .withSuccessHandler(settings => {
+            // FIX 4: Keys are now lowercase from the backend — these match correctly
+            if (settings.facebook)  document.getElementById('link-facebook').value  = settings.facebook;
+            if (settings.x)         document.getElementById('link-x').value         = settings.x;
+            if (settings.instagram) document.getElementById('link-instagram').value = settings.instagram;
+            if (settings.linkedin)  document.getElementById('link-linkedin').value  = settings.linkedin;
+            if (settings.youtube)   document.getElementById('link-youtube').value   = settings.youtube;
+            if (settings.tiktok)    document.getElementById('link-tiktok').value    = settings.tiktok;
+            if (settings.website)   document.getElementById('link-website').value   = settings.website;
+          })
+          .getSystemSettings();
+      }
+
+      // FIX 5: Send lowercase keys + added withFailureHandler for silent error visibility
+      function commitSettings() {
+        const btn = document.getElementById('save-settings-btn');
+        btn.innerText = "⏳ Saving...";
+
+        const payload = {
+          'facebook':  document.getElementById('link-facebook').value.trim(),
+          'x':         document.getElementById('link-x').value.trim(),
+          'instagram': document.getElementById('link-instagram').value.trim(),
+          'linkedin':  document.getElementById('link-linkedin').value.trim(),
+          'youtube':   document.getElementById('link-youtube').value.trim(),
+          'tiktok':    document.getElementById('link-tiktok').value.trim(),
+          'website':   document.getElementById('link-website').value.trim()
+        };
+
+        google.script.run
+          .withFailureHandler(err => {
+            btn.innerText = "❌ Save Failed";
+            console.error('Settings save error:', err);
+            setTimeout(() => { btn.innerText = "💾 Save Network Links"; }, 2500);
+          })
+          .withSuccessHandler(() => {
+            btn.innerText = "✅ Saved Successfully";
+            setTimeout(() => { btn.innerText = "💾 Save Network Links"; }, 2000);
+          })
+          .saveSystemSettings(payload);
+      }
+
+      function fireBroadcastCampaign() {
+        const btn      = document.getElementById('send-broadcast-btn');
+        const subj     = document.getElementById('campaign-subject').value.trim();
+        const rowNodes = document.querySelectorAll('.campaign-segment-row');
+
+        if (!subj) {
+          alert('Please enter a subject header before dispatching.');
+          return;
+        }
+        if (rowNodes.length === 0) {
+          alert('Please add at least one image segment before dispatching.');
+          return;
+        }
+
+        // Build image segments
+        let inlineTableCellsHTML = '';
+        for (let i = 0; i < rowNodes.length; i++) {
+          const row        = rowNodes[i];
+          const internalId = row.getAttribute('data-row-id');
+          const imgField   = document.getElementById(`segment-img-input-${internalId}`);
+          const linkToggle = document.getElementById(`check-link-${internalId}`);
+          const targetField= document.getElementById(`segment-target-input-${internalId}`);
+
+          const imageUrl  = imgField    ? imgField.value.trim()   : "";
+          const hasLink   = linkToggle  ? linkToggle.checked      : false;
+          const targetUrl = targetField ? targetField.value.trim(): "";
+
+          if (!imageUrl) {
+            alert(`Segment ${i + 1} is missing an image source URL.`);
+            return;
+          }
+          if (hasLink && !targetUrl) {
+            alert(`Segment ${i + 1} has a hyperlink enabled but no destination URL provided.`);
+            return;
+          }
+
+          let cellBody = `<img src="${imageUrl}" alt="Newsletter Image" width="600" style="width:100%;max-width:600px;height:auto;display:block;">`;
+          if (hasLink) {
+            cellBody = `<a href="${targetUrl}" target="_blank" style="display:block;border:0;text-decoration:none;">${cellBody}</a>`;
+          }
+          inlineTableCellsHTML += `<tr><td width="600" style="width:600px;padding:0;margin:0;line-height:0;">${cellBody}</td></tr>`;
+        }
+
+        // Build social footer
+        const socialConfig = [
+          { id: 'link-facebook',  icon: 'https://cdn-icons-png.flaticon.com/512/3128/3128208.png' },
+          { id: 'link-x',         icon: 'https://cdn-icons-png.flaticon.com/512/11823/11823292.png' },
+          { id: 'link-instagram', icon: 'https://cdn-icons-png.flaticon.com/512/3128/3128212.png' },
+          { id: 'link-linkedin',  icon: 'https://cdn-icons-png.flaticon.com/512/3128/3128219.png' },
+          { id: 'link-youtube',   icon: 'https://cdn-icons-png.flaticon.com/512/3128/3128307.png' },
+          { id: 'link-tiktok',    icon: 'https://cdn-icons-png.flaticon.com/512/3128/3128319.png' }
+        ];
+
+        let socialIconsHTML = '';
+        socialConfig.forEach(item => {
+          const val = document.getElementById(item.id).value.trim();
+          if (val) {
+            socialIconsHTML += `<a href="${val}" target="_blank" style="text-decoration:none;margin:0 6px;"><img src="${item.icon}" width="28" height="28" style="display:inline-block;border:none;"></a>`;
+          }
+        });
+
+        const webLink = document.getElementById('link-website').value.trim();
+        const webHTML = webLink
+          ? `<div style="margin-top:15px;"><a href="${webLink}" target="_blank" style="font-family:sans-serif;font-size:12px;color:#3b82f6;text-decoration:none;font-weight:bold;">Visit Official Portal</a></div>`
+          : '';
+
+        const footerHTML = (socialIconsHTML || webHTML) ? `
+          <tr>
+            <td align="center" style="padding:30px 20px;background-color:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
+              <p style="font-family:sans-serif;font-size:11px;color:#64748b;margin:0 0 12px 0;text-transform:uppercase;font-weight:bold;">Connect with us</p>
+              <div>${socialIconsHTML}</div>
+              ${webHTML}
+            </td>
+          </tr>` : '';
+
+        // Assemble master HTML
+        const masterCompiledHtml = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body,table,td,p,a{margin:0;padding:0;}
+    body{background-color:#f1f5f9;}
+    img{display:block!important;border:0!important;outline:none!important;text-decoration:none!important;}
+  </style>
+</head>
+<body>
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#f1f5f9">
+    <tr>
+      <td align="center" style="padding:25px 0;">
+        <table width="600" border="0" cellpadding="0" cellspacing="0" style="width:600px;border-collapse:collapse;background-color:#ffffff;">
+          ${inlineTableCellsHTML}
+          ${footerHTML}
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
+        // Execute broadcast
+        btn.disabled  = true;
+        btn.innerText = '⏳ Processing Queue...';
+
+        google.script.run
+          .withFailureHandler(err => {
+            alert('Broadcast failed: ' + err.message);
+            btn.disabled  = false;
+            btn.innerText = '🚀 Execute Bulk Mail Dispatch';
+          })
+          .withSuccessHandler(count => {
+            alert(`✅ Broadcast complete! ${count} message(s) successfully delivered.`);
+            toggleCampaignModal(false);
+            btn.disabled  = false;
+            btn.innerText = '🚀 Execute Bulk Mail Dispatch';
+            loadCampaignsHistoryTable();
+            refreshDashboardStats();
+          })
+          .executeBroadcast(subj, masterCompiledHtml);
+      }
+    </script>
+  </body>
+</html>
